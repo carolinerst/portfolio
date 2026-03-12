@@ -1,0 +1,110 @@
+body {      
+    background: #111120;
+    background: radial-gradient(circle,rgb(19, 19, 34) 47%, rgb(14, 11, 19) 100%, rgb(20, 16, 28) 0%);
+    margin: 0;
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+
+header {
+    display: flex;
+    gap: 4px;
+    color: rgb(255, 255, 255);  
+    font-size: 50px;
+    text-align: center; 
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 48px;
+
+    h1, h3 {
+        margin: 0;
+        text-shadow: 1px 1px 2px rgb(227, 255, 19);
+    }
+}
+
+#about {
+   display: flex;
+   flex-direction: column;
+   gap: 12px;
+
+    h1 {
+        font-family: bbbKarrik;
+        font-size: 48px;
+        margin: 0;
+    }  
+    p {
+        font-size: 24px;
+        margin: 0;
+    } 
+}
+
+#details {
+    width: 30%;
+    img {
+        width: fit-content;
+    }
+}
+
+#education {
+    border: 1px;
+}
+
+nav {
+    background: black;
+    font-size: 12px;    
+    ul {
+        display: grid;  
+        list-style-type: none;
+        grid-template-columns: repeat(5,1fr);
+        margin: 0;
+        padding: 0;
+    
+        > * {
+            border-right: 1px solid white;
+            border-bottom: 1px solid white;
+            padding: 16px 0;
+        }
+    
+        > li:hover{
+            background-color: #9005e7;
+        }
+    }
+}
+
+
+section {
+    padding: 16px;
+    display: flex; 
+    gap: 32px;
+    width: 100%;
+}
+
+
+@font-face {
+    font-family: dinDong;
+    src: url(./public/assets/fonts/dindong-main/ttf/DINdong.ttf);
+}
+
+@font-face {
+    font-family: adelpheTrouble;
+    src: url(./public/assets/fonts/adelphe-trouble-main/ttf/Adelphe-Trouble-FlorealRegular.ttf);
+}
+
+@font-face {
+    font-family: adelpheTroubleBoldItalic;
+    src: url(./public/assets/fonts/adelphe-trouble-main/ttf/floreal/Adelphe-Trouble-FlorealBoldItalic.ttf);
+}
+
+@font-face {
+    font-family: adelpheTroubleBold;
+    src: url(./public/assets/fonts/adelphe-trouble-main/ttffonts/adelphe-trouble-main/ttf/floreal/Adelphe-Trouble-FlorealBold.ttf);
+}
+
+@font-face {
+    font-family: bbbKarrik;
+    src: url(./public/assets/fonts/bbb-karrik-main/ttf/BBB_Karrik.ttf);
+}
