@@ -1,9 +1,17 @@
 import * as THREE from 'three';
 import { simulationFragmentShader, simulationVertexShader, renderFragmentShader, renderVertexShader } from './shader.js';
-import { EffectComposer, RenderPass } from 'three/examples/jsm/Addons.js';
-import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass.js';
+import { EffectComposer, RenderPass, FilmPass, BloomPass, UnrealBloomPass } from 'three/examples/jsm/Addons.js';
+import { HorizontalBlurShader } from "three/examples/jsm/shaders/HorizontalBlurShader.js";
+import { VerticalBlurShader } from "three/examples/jsm/shaders/VerticalBlurShader.js";
+import { Vector2 } from 'three';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+
 
 document.addEventListener("DOMContentLoaded", () => { 
+  
+  const backgroundColor = "#2f2963";
+  const fontColor = "#B9ECB6";
+  const BLUR_INTENSITY = 2.0;
 
   const scene = new THREE.Scene(); 
   const simScene = new THREE.Scene(); 
@@ -20,6 +28,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   composer.addPass(renderPass);
 
+  const params = {
+    strength: 0.2,
+    radius: 0.4,
+    threshold: 0.85
+  }
+
+  const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), params.strength, params.radius, params.threshold);
+  composer.addPass(bloomPass);
+
   const filmPass = new FilmPass(0.35, 0.0, 648.0, 0.0);
   composer.addPass(filmPass);
 
@@ -27,9 +44,8 @@ document.addEventListener("DOMContentLoaded", () => {
   renderer.setSize(window.innerWidth, window.innerHeight); 
 
   composer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  composer.setSize(window.innerWidth, window.innerHeight);
+  composer.setSize(window.innerWidth, window.innerHeight);  
 
-  
   document.body.appendChild(renderer.domElement); 
   
   const mouse = new THREE.Vector2(); 
@@ -84,18 +100,19 @@ document.addEventListener("DOMContentLoaded", () => {
   canvas.height = height; 
   canvas.width = width; 
 
-  const ctx = canvas.getContext("2d", { alpha: true }) 
 
-  ctx.fillStyle = "#774F8F"; 
+  const ctx = canvas.getContext("2d", { alpha: true }) 
+  ctx.fillStyle = backgroundColor; 
   ctx.fillRect(0, 0, width, height); 
 
   const fontSize = Math.round(250 * window.devicePixelRatio); 
 
-  ctx.fillStyle = "#98919C"; 
+  ctx.fillStyle = fontColor; 
   ctx.font = `bold ${fontSize}px adelpheTrouble`; 
   ctx.textAlign = "center"; 
   ctx.textBaseline = "middle"; 
   ctx.textRendering = "geometricPrecision"; 
+  ctx.filter = `blur(${BLUR_INTENSITY}px)`;
   ctx.imageSmoothingEnabled = true; 
   ctx.imageSmoothingQuality = "high"; 
   ctx.fillText("welcome", width/2, height/2); 
@@ -117,16 +134,17 @@ document.addEventListener("DOMContentLoaded", () => {
     
     canvas.width = newWidth; 
     canvas.height = newHeight; 
-    ctx.fillStyle = "#774F8F"; 
+    ctx.fillStyle = backgroundColor; 
     ctx.fillRect(0, 0, newWidth, newHeight); 
 
     const newFontSize = Math.round(250 * window.devicePixelRatio); 
 
-    ctx.fillStyle = "#98919C"; 
+    ctx.fillStyle = fontColor; 
     ctx.font = `bold ${newFontSize}px adelpheTrouble`; 
     ctx.textAlign = "center"; 
     ctx.textBaseline = "middle"; 
     ctx.textRendering = "geometricPrecision"; 
+    ctx.filter = `blur(${BLUR_INTENSITY}px)`;
     ctx.imageSmoothingEnabled = true; 
     ctx.imageSmoothingQuality = "high"; 
     ctx.fillText("welcome", width/2, height/2); 
@@ -154,8 +172,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     renderMaterial.uniforms.textureA.value = rtB.texture; 
     renderMaterial.uniforms.textureB.value = textTexture; 
+
     renderer.setRenderTarget(null); 
-    renderer.render(scene, camera); 
+    renderer.render(scene, camera);
+
     composer.render();
 
     const temp = rtA; 
