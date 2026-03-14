@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { simulationFragmentShader, simulationVertexShader, renderFragmentShader, renderVertexShader } from './shader.js';
+import { EffectComposer, RenderPass } from 'three/examples/jsm/Addons.js';
+import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass.js';
 
 document.addEventListener("DOMContentLoaded", () => { 
 
@@ -12,8 +14,20 @@ document.addEventListener("DOMContentLoaded", () => {
     alpha: true, 
     preserveDrawingBuffer: true, 
   }); 
+
+  const composer = new EffectComposer(renderer);
+  const renderPass = new RenderPass(scene, camera);
+
+  composer.addPass(renderPass);
+
+  const filmPass = new FilmPass(0.35, 0.0, 648.0, 0.0);
+  composer.addPass(filmPass);
+
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); 
   renderer.setSize(window.innerWidth, window.innerHeight); 
+
+  composer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  composer.setSize(window.innerWidth, window.innerHeight);
 
   
   document.body.appendChild(renderer.domElement); 
@@ -72,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const ctx = canvas.getContext("2d", { alpha: true }) 
 
-  ctx.fillStyle = "#220D24"; 
+  ctx.fillStyle = "#774F8F"; 
   ctx.fillRect(0, 0, width, height); 
 
   const fontSize = Math.round(250 * window.devicePixelRatio); 
@@ -103,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     canvas.width = newWidth; 
     canvas.height = newHeight; 
-    ctx.fillStyle = "#220D24"; 
+    ctx.fillStyle = "#774F8F"; 
     ctx.fillRect(0, 0, newWidth, newHeight); 
 
     const newFontSize = Math.round(250 * window.devicePixelRatio); 
@@ -142,6 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderMaterial.uniforms.textureB.value = textTexture; 
     renderer.setRenderTarget(null); 
     renderer.render(scene, camera); 
+    composer.render();
 
     const temp = rtA; 
     rtA = rtB; 
