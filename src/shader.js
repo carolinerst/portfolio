@@ -73,16 +73,20 @@ void main() {
 
 export const renderFragmentShader = `
 uniform sampler2D textureA;
-uniform sampler2D textureB;
+uniform sampler2D textureB; 
+uniform vec2 mouse;
 
 varying vec2 vUv;
 
-void main() {
+void main() {   
 
+    vec2 mouseOffset = (mouse - 0.05) * 0.006;
     vec4 data = texture2D(textureA, vUv);
+    
+   
 
-    vec2 distortion = 0.05 * data.zw; 
-    vec4 color = texture2D(textureB, vUv + distortion);
+    vec2 distortion = 0.1 * data.zw; 
+    vec4 color = texture2D(textureB, vUv + distortion + mouseOffset);
 
     vec3 normal = normalize(vec3(-data.z * 2.0, 0.5, -data.w * 2.0));
     vec3 lightDir = normalize(vec3(-3.0, 10.0, 3.0));

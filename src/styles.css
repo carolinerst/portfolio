@@ -1,5 +1,5 @@
 body {      
-    background-color: #111120;
+    background-color: #2f2963;
     margin: 0;
 }
 
@@ -30,12 +30,13 @@ header {
 
 nav {
     background: transparent;
+    font-family: "bbbKarrik";
     font-size: 12px;    
     z-index: 2;
     ul {
         display: grid;  
         list-style-type: none;
-        grid-template-columns: repeat(5,1fr);
+        grid-template-columns: repeat(3,1fr);
         margin: 0;
         padding: 0;
     
@@ -57,28 +58,17 @@ section {
     width: 100%;
 }
 
-
 @font-face {
-    font-family: dinDong;
-    src: url(./public/assets/fonts/dindong-main/ttf/DINdong.ttf);
+    font-family: bbbDmBold;
+    src: url(../public/assets/fonts/bbb-dm-sans-main/ttf/BBBDMSans-Bold.ttf);
 }
 
 @font-face {
-    font-family: adelpheTrouble;
-    src: url(./public/assets/fonts/adelphe-trouble-main/ttf/Adelphe-Trouble-FlorealRegular.ttf);
-}
-
-@font-face {
-    font-family: adelpheTroubleBoldItalic;
-    src: url(./public/assets/fonts/adelphe-trouble-main/ttf/floreal/Adelphe-Trouble-FlorealBoldItalic.ttf);
-}
-
-@font-face {
-    font-family: adelpheTroubleBold;
-    src: url(./public/assets/fonts/adelphe-trouble-main/ttffonts/adelphe-trouble-main/ttf/floreal/Adelphe-Trouble-FlorealBold.ttf);
+    font-family: picnicMain;
+    src: url(../public/assets/fonts/picnic-main/otf/PicNic.otf);
 }
 
 @font-face {
     font-family: bbbKarrik;
-    src: url(./public/assets/fonts/bbb-karrik-main/ttf/BBB_Karrik.ttf);
+    src: url(../public/assets/fonts/bbb-karrik-main/ttf/BBB_Karrik.ttf);
 }
