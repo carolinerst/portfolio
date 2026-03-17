@@ -3,17 +3,40 @@ import { simulationFragmentShader, simulationVertexShader, renderFragmentShader,
 import { EffectComposer, RenderPass, FilmPass, UnrealBloomPass } from 'three/examples/jsm/Addons.js';
 
 
+const FONT_COLOR = "#EDD8B7";
+const BLUR_INTENSITY = 2.0;
+const FONT = "picnicMain";
+
+const GRADIENT_STOPS = [{color: "#fffdf8", offset: 0.00}, 
+  {color: "#f6debe", offset: 0.01}, 
+  {color: "#ddb393", offset: 0.02}, 
+  {color: "#b38a7a", offset: 0.75}, 
+  {color: "#918887", offset: 1.00}
+];
+
+const addPass = (composer, passList) => {
+  passList.forEach((pass) => composer.addPass(pass));
+}; 
+
+const createGradient = (context, height, width, stops) => {
+
+  const gradient = context.createRadialGradient(
+    width / 2, height / 2, 0,
+    width / 2, height / 2, Math.max(width, height) / 2
+  );
+
+  stops.forEach((stop) => {
+    gradient.addColorStop(stop.offset, stop.color);
+  });
+
+  return gradient;
+};
+
 document.addEventListener("DOMContentLoaded", async () => { 
   
-  const BACKGROUND_COLOR = "#2f2963";
-  const FONT_COLOR = "#EDD8B7";
-  const BLUR_INTENSITY = 2.0;
-
   const scene = new THREE.Scene(); 
   const simScene = new THREE.Scene(); 
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-
-  const FONT = "picnicMain"
 
   const renderer = new THREE.WebGLRenderer({ 
     antialias: true, 
@@ -24,19 +47,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   const composer = new EffectComposer(renderer);
   const renderPass = new RenderPass(scene, camera);
 
-  composer.addPass(renderPass);
-
-  const params = {
+  const bloomParams = {
     strength: 0.2,
     radius: 0.4,
     threshold: 0.85
   }
 
-  const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), params.strength, params.radius, params.threshold);
-  composer.addPass(bloomPass);
-
+  const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), bloomParams.strength, bloomParams.radius, bloomParams.threshold);
   const filmPass = new FilmPass(0.35, 0.0, 648.0, 0.0);
-  composer.addPass(filmPass);
+
+  addPass(composer, [renderPass, bloomPass, filmPass]);
 
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); 
   renderer.setSize(window.innerWidth, window.innerHeight); 
@@ -103,22 +123,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const ctx = canvas.getContext("2d", { alpha: true }) 
 
   
-  ctx.fillRect(0, 0, width, height); 
+  ctx.fillStyle = createGradient(ctx, height, width, GRADIENT_STOPS);
 
-  const gradient = ctx.createRadialGradient(
-    width / 2, height / 2, 0,
-    width / 2, height / 2, Math.max(width, height) / 2
-  );
-  
-  gradient.addColorStop(0.00, "#fffdf8");
-  gradient.addColorStop(0.01, "#f6debe");
-  gradient.addColorStop(0.02, "#ddb393");
-  gradient.addColorStop(0.75, "#b38a7a");
-  gradient.addColorStop(1.00, "#918887");
-  
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, width, height);
-  
 
   const fontSize = Math.round(200 * window.devicePixelRatio); 
   await document.fonts.load(`bold ${fontSize}px ${FONT}`);
@@ -133,9 +139,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   ctx.filter = `blur(${BLUR_INTENSITY}px)`;
   ctx.imageSmoothingEnabled = true; 
   ctx.imageSmoothingQuality = "high";    
-
-
-
 
   ctx.fillText("welcome", width/2, height/2); 
 
@@ -156,20 +159,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     canvas.width = newWidth; 
     canvas.height = newHeight; 
-    ctx.fillStyle = BACKGROUND_COLOR; 
-    ctx.fillRect(0, 0, newWidth, newHeight); 
-    const gradient = ctx.createRadialGradient(
-      width / 2, height / 2, 0,
-      width / 2, height / 2, Math.max(width, height) / 2
-    );
     
-    gradient.addColorStop(0.00, "#fffdf8");
-    gradient.addColorStop(0.01, "#f6debe");
-    gradient.addColorStop(0.02, "#ddb393");
-    gradient.addColorStop(0.80, "#b38a7a");
-    gradient.addColorStop(1.00, "#918887");
-    
-    ctx.fillStyle = gradient;
+    ctx.fillStyle = createGradient(ctx, newHeight, newWidth, GRADIENT_STOPS);
     ctx.fillRect(0, 0, width, height);
 
     const newFontSize = Math.round(250 * window.devicePixelRatio); 
