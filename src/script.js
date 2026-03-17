@@ -1,22 +1,20 @@
 import * as THREE from 'three';
 import { simulationFragmentShader, simulationVertexShader, renderFragmentShader, renderVertexShader } from './shader.js';
-import { EffectComposer, RenderPass, FilmPass, BloomPass, UnrealBloomPass } from 'three/examples/jsm/Addons.js';
-import { HorizontalBlurShader } from "three/examples/jsm/shaders/HorizontalBlurShader.js";
-import { VerticalBlurShader } from "three/examples/jsm/shaders/VerticalBlurShader.js";
-import { Vector2 } from 'three';
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { EffectComposer, RenderPass, FilmPass, UnrealBloomPass } from 'three/examples/jsm/Addons.js';
 
 
-document.addEventListener("DOMContentLoaded", () => { 
+document.addEventListener("DOMContentLoaded", async () => { 
   
-  const backgroundColor = "#2f2963";
-  const fontColor = "#B9ECB6";
+  const BACKGROUND_COLOR = "#2f2963";
+  const FONT_COLOR = "#EDD8B7";
   const BLUR_INTENSITY = 2.0;
 
   const scene = new THREE.Scene(); 
   const simScene = new THREE.Scene(); 
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
- 
+
+  const FONT = "picnicMain"
+
   const renderer = new THREE.WebGLRenderer({ 
     antialias: true, 
     alpha: true, 
@@ -49,6 +47,9 @@ document.addEventListener("DOMContentLoaded", () => {
   document.body.appendChild(renderer.domElement); 
   
   const mouse = new THREE.Vector2(); 
+  const targetMouse = new THREE.Vector2();
+  const smoothMouse = new THREE.Vector2();
+
   let frame = 0; 
   const width = window.innerWidth * window.devicePixelRatio; 
   const height = window.innerHeight * window.devicePixelRatio;
@@ -99,25 +100,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
   canvas.height = height; 
   canvas.width = width; 
-
-
   const ctx = canvas.getContext("2d", { alpha: true }) 
-  ctx.fillStyle = backgroundColor; 
+
+  
   ctx.fillRect(0, 0, width, height); 
 
-  const fontSize = Math.round(250 * window.devicePixelRatio); 
+  const gradient = ctx.createRadialGradient(
+    width / 2, height / 2, 0,
+    width / 2, height / 2, Math.max(width, height) / 2
+  );
+  
+  gradient.addColorStop(0.00, "#fffdf8");
+  gradient.addColorStop(0.01, "#f6debe");
+  gradient.addColorStop(0.02, "#ddb393");
+  gradient.addColorStop(0.75, "#b38a7a");
+  gradient.addColorStop(1.00, "#918887");
+  
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, width, height);
+  
 
-  ctx.fillStyle = fontColor; 
-  ctx.font = `bold ${fontSize}px adelpheTrouble`; 
+  const fontSize = Math.round(200 * window.devicePixelRatio); 
+  await document.fonts.load(`bold ${fontSize}px ${FONT}`);
+  
+  ctx.fillRect(0, 0, width, height);
+  ctx.fillStyle = FONT_COLOR; 
+  ctx.letterSpacing = "0.1rem";
   ctx.textAlign = "center"; 
   ctx.textBaseline = "middle"; 
+  ctx.font = `bold ${fontSize}px ${FONT}`; 
   ctx.textRendering = "geometricPrecision"; 
   ctx.filter = `blur(${BLUR_INTENSITY}px)`;
   ctx.imageSmoothingEnabled = true; 
-  ctx.imageSmoothingQuality = "high"; 
+  ctx.imageSmoothingQuality = "high";    
+
+
+
+
   ctx.fillText("welcome", width/2, height/2); 
 
-  const textTexture = new THREE.CanvasTexture(canvas); 
+  const textTexture = new THREE.CanvasTexture(canvas);
   textTexture.minFilter = THREE.LinearFilter; 
   textTexture.magFilter = THREE.LinearFilter; 
   textTexture.format = THREE.RGBAFormat; 
@@ -134,13 +156,26 @@ document.addEventListener("DOMContentLoaded", () => {
     
     canvas.width = newWidth; 
     canvas.height = newHeight; 
-    ctx.fillStyle = backgroundColor; 
+    ctx.fillStyle = BACKGROUND_COLOR; 
     ctx.fillRect(0, 0, newWidth, newHeight); 
+    const gradient = ctx.createRadialGradient(
+      width / 2, height / 2, 0,
+      width / 2, height / 2, Math.max(width, height) / 2
+    );
+    
+    gradient.addColorStop(0.00, "#fffdf8");
+    gradient.addColorStop(0.01, "#f6debe");
+    gradient.addColorStop(0.02, "#ddb393");
+    gradient.addColorStop(0.80, "#b38a7a");
+    gradient.addColorStop(1.00, "#918887");
+    
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
 
     const newFontSize = Math.round(250 * window.devicePixelRatio); 
 
-    ctx.fillStyle = fontColor; 
-    ctx.font = `bold ${newFontSize}px adelpheTrouble`; 
+    ctx.fillStyle = FONT_COLOR; 
+    ctx.font = `bold ${newFontSize}px ${FONT}`; 
     ctx.textAlign = "center"; 
     ctx.textBaseline = "middle"; 
     ctx.textRendering = "geometricPrecision"; 
@@ -155,6 +190,9 @@ document.addEventListener("DOMContentLoaded", () => {
   renderer.domElement.addEventListener("mousemove", (e) => { 
     mouse.x = e.clientX * window.devicePixelRatio; 
     mouse.y = (window.innerHeight - e.clientY) * window.devicePixelRatio; 
+    targetMouse.x = e.clientX / window.innerWidth;
+    targetMouse.y = 1 - e.clientY / window.innerHeight; 
+    
   }); 
 
   renderer.domElement.addEventListener("mouseleave", () => { 
@@ -169,9 +207,12 @@ document.addEventListener("DOMContentLoaded", () => {
     simMaterial.uniforms.textureA.value = rtA.texture; 
     renderer.setRenderTarget(rtB); 
     renderer.render(simScene, camera); 
+    smoothMouse.lerp(targetMouse, 0.05);
+
 
     renderMaterial.uniforms.textureA.value = rtB.texture; 
     renderMaterial.uniforms.textureB.value = textTexture; 
+    renderMaterial.uniforms.mouse.value = smoothMouse;
 
     renderer.setRenderTarget(null); 
     renderer.render(scene, camera);
