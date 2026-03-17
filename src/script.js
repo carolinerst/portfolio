@@ -111,16 +111,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   );
   
   gradient.addColorStop(0.00, "#fffdf8");
-  gradient.addColorStop(0.00, "#f6debe");
+  gradient.addColorStop(0.01, "#f6debe");
   gradient.addColorStop(0.02, "#ddb393");
   gradient.addColorStop(0.75, "#b38a7a");
-  gradient.addColorStop(1.00, "#787271");
+  gradient.addColorStop(1.00, "#918887");
   
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, width, height);
   
 
-  const fontSize = Math.round(300 * window.devicePixelRatio); 
+  const fontSize = Math.round(200 * window.devicePixelRatio); 
   await document.fonts.load(`bold ${fontSize}px ${FONT}`);
   
   ctx.fillRect(0, 0, width, height);
@@ -164,10 +164,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     );
     
     gradient.addColorStop(0.00, "#fffdf8");
-    gradient.addColorStop(0.00, "#f6debe");
+    gradient.addColorStop(0.01, "#f6debe");
     gradient.addColorStop(0.02, "#ddb393");
-    gradient.addColorStop(0.75, "#b38a7a");
-    gradient.addColorStop(1.00, "#787271");
+    gradient.addColorStop(0.80, "#b38a7a");
+    gradient.addColorStop(1.00, "#918887");
     
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
