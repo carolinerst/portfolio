@@ -32,6 +32,25 @@ const createGradient = (context, height, width, stops) => {
   return gradient;
 };
 
+const createText = (context, height, width) => {
+
+  const fontSize = Math.round(200 * window.devicePixelRatio); 
+
+  context.fillRect(0, 0, width, height);
+  context.fillStyle = FONT_COLOR; 
+  context.font = `bold ${fontSize}px ${FONT}`; 
+  context.letterSpacing = "0.1rem";
+  context.textAlign = "center"; 
+  context.textBaseline = "middle"; 
+  context.textRendering = "geometricPrecision"; 
+  context.filter = `blur(${BLUR_INTENSITY}px)`;
+  context.imageSmoothingEnabled = true; 
+  context.imageSmoothingQuality = "high"; 
+
+  context.fillText("welcome", width/2, height/2); 
+
+};
+
 document.addEventListener("DOMContentLoaded", async () => { 
   
   const scene = new THREE.Scene(); 
@@ -129,18 +148,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const fontSize = Math.round(200 * window.devicePixelRatio); 
   await document.fonts.load(`bold ${fontSize}px ${FONT}`);
   
-  ctx.fillRect(0, 0, width, height);
-  ctx.fillStyle = FONT_COLOR; 
-  ctx.letterSpacing = "0.1rem";
-  ctx.textAlign = "center"; 
-  ctx.textBaseline = "middle"; 
-  ctx.font = `bold ${fontSize}px ${FONT}`; 
-  ctx.textRendering = "geometricPrecision"; 
-  ctx.filter = `blur(${BLUR_INTENSITY}px)`;
-  ctx.imageSmoothingEnabled = true; 
-  ctx.imageSmoothingQuality = "high";    
-
-  ctx.fillText("welcome", width/2, height/2); 
+  createText(ctx, height, width);
 
   const textTexture = new THREE.CanvasTexture(canvas);
   textTexture.minFilter = THREE.LinearFilter; 
@@ -160,21 +168,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     canvas.width = newWidth; 
     canvas.height = newHeight; 
     
-    ctx.fillStyle = createGradient(ctx, newHeight, newWidth, GRADIENT_STOPS);
-    ctx.fillRect(0, 0, width, height);
-
-    const newFontSize = Math.round(250 * window.devicePixelRatio); 
-
-    ctx.fillStyle = FONT_COLOR; 
-    ctx.font = `bold ${newFontSize}px ${FONT}`; 
-    ctx.textAlign = "center"; 
-    ctx.textBaseline = "middle"; 
-    ctx.textRendering = "geometricPrecision"; 
-    ctx.filter = `blur(${BLUR_INTENSITY}px)`;
-    ctx.imageSmoothingEnabled = true; 
-    ctx.imageSmoothingQuality = "high"; 
-    ctx.fillText("welcome", width/2, height/2); 
-
+    ctx.fillStyle = createGradient(ctx, height, width, GRADIENT_STOPS);
+    createText(ctx, newHeight, newWidth);
     textTexture.needsUpdate = true; 
   }); 
 
