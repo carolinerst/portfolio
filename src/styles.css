@@ -17,17 +17,9 @@ header {
     display: flex;
     gap: 4px;
     color: rgb(255, 255, 255);  
-    font-size: 50px;
-    font-family: adelpheTroubleBold;
     text-align: center; 
     justify-content: center;
     flex-direction: column;
-    margin-bottom: 48px;
-
-    h1, h3 {
-        margin: 0;
-        text-shadow: 1px 1px 2px rgb(227, 255, 19);
-    }
 }
 
 nav {
@@ -50,14 +42,6 @@ nav {
             color: #adf6a1;
         }
     }
-}
-
-
-section {
-    padding: 16px;
-    display: flex; 
-    gap: 32px;
-    width: 100%;
 }
 
 @font-face {

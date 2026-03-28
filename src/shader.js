@@ -83,8 +83,6 @@ void main() {
     vec2 mouseOffset = (mouse - 0.05) * 0.006;
     vec4 data = texture2D(textureA, vUv);
     
-   
-
     vec2 distortion = 0.1 * data.zw; 
     vec4 color = texture2D(textureB, vUv + distortion + mouseOffset);
 
