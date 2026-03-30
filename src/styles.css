@@ -1,47 +1,76 @@
 body {      
-    background: radial-gradient(circle at 50% 50%, #fffdf8, #f6debe 5%, #ddb393 20%, #b38a7a 75%, #918887 100%);
-    background-attachment: fixed;
-    background-repeat: no-repeat;
+    background: white;
+    display: grid;
+    grid-template-rows: min-content 1fr;
     margin: 0;
+    z-index: 0;
 }
 
 canvas {
-    position: fixed;
     top: 0;
     left: 0;
-    width: 100vw; 
+    position: absolute;
     height: 100vh;
-  }
+}
 
 header {
+    color: rgb(255, 255, 255);  
     display: flex;
     gap: 4px;
-    color: rgb(255, 255, 255);  
-    text-align: center; 
-    justify-content: center;
     flex-direction: column;
+    grid-column-start: 1;
+    grid-row-start: 1;
+    justify-content: center; 
+    position: sticky;
+    text-align: center; 
+    top: 0;
+    z-index: 2;
+}
+
+.main {
+    grid-column: 1 / -1;
+    grid-row: 1 / span 2;
+    height: 100vh;
+    width: 100vw; 
 }
 
 nav {
     background: transparent;
     font-family: "bbbKarrik";
     font-size: 12px;    
-    z-index: 2;
-    ul {
-        display: grid;  
-        list-style-type: none;
-        grid-template-columns: repeat(3,1fr);
-        margin: 0;
-        padding: 0;
-    
-        > * {
-            padding: 16px 0;
+    top: 0;   
+}
+
+.navlinks {
+    display: grid;  
+    list-style-type: none;
+    grid-template-columns: repeat(4,1fr);
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+
+    > * {
+        padding: 16px 0;
+    }
+
+    > li {
+
+        > a {
+            color: #EDD8B7;
+            text-decoration: none;
         }
-    
-        > li:hover{
+
+        > a:hover {
             color: #adf6a1;
         }
+     
     }
+}
+
+section {
+    height: 100vh;
+    width: 100vw;
+    z-index: 1;
 }
 
 @font-face {
