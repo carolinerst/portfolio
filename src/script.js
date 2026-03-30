@@ -2,10 +2,38 @@ import * as THREE from 'three';
 import { simulationFragmentShader, simulationVertexShader, renderFragmentShader, renderVertexShader } from './shader.js';
 import { EffectComposer, RenderPass, FilmPass, UnrealBloomPass } from 'three/examples/jsm/Addons.js';
 
+const createGradient = (context, height, stops, width) => {
+  const gradient = context.createRadialGradient(
+    width / 2, height / 2, 0,
+    width / 2, height / 2, Math.max(width, height) / 2
+  );
+
+  stops.forEach((stop) => {
+    gradient.addColorStop(stop.offset, stop.color);
+  });
+
+  return gradient;
+
+};
+
+const createCanvas = (height, width) => {
+
+  const canvas = document.createElement("canvas"); 
+  canvas.height = height; 
+  canvas.width = width; 
+
+  return canvas;
+}
 
 document.addEventListener("DOMContentLoaded", async () => { 
   
-  const BACKGROUND_COLOR = "#2f2963";
+  const STOPS = [
+    { color: "#fffdf8", offset: 0.00 }, 
+    { color:"#f6debe", offset:  0.01 }, 
+    { color: "#ddb393", offset: 0.02 }, 
+    { color: "#b38a7a", offset: 0.75 },
+    { color: "#918887", offset: 1.00 }];
+
   const FONT_COLOR = "#EDD8B7";
   const BLUR_INTENSITY = 2.0;
 
@@ -82,7 +110,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     uniforms: { 
       textureA: { value: null }, 
       textureB: { value: null },
+      text: { value: null },
       mouse: { value: mouse }, 
+      resolution: { value: new THREE.Vector2(width, height) },
+      scroll: { value: 0 },
     }, 
     vertexShader: renderVertexShader, 
     fragmentShader: renderFragmentShader, 
@@ -96,50 +127,49 @@ document.addEventListener("DOMContentLoaded", async () => {
   simScene.add(simQuad); 
   scene.add(renderQuad); 
 
-  const canvas = document.createElement("canvas"); 
+  const canvas = createCanvas(height, width);
+  const canvasText = createCanvas(height, width);
 
-  canvas.height = height; 
-  canvas.width = width; 
-  const ctx = canvas.getContext("2d", { alpha: true }) 
+  const ctx = canvas.getContext("2d", { alpha: true }); 
+  const ctxText = canvasText.getContext("2d", { alpha: true }); 
 
-  
   ctx.fillRect(0, 0, width, height); 
-
-  const gradient = ctx.createRadialGradient(
-    width / 2, height / 2, 0,
-    width / 2, height / 2, Math.max(width, height) / 2
-  );
   
-  gradient.addColorStop(0.00, "#fffdf8");
-  gradient.addColorStop(0.01, "#f6debe");
-  gradient.addColorStop(0.02, "#ddb393");
-  gradient.addColorStop(0.75, "#b38a7a");
-  gradient.addColorStop(1.00, "#918887");
-  
-  ctx.fillStyle = gradient;
+  ctx.fillStyle = createGradient(ctx, height, STOPS, width);
   ctx.fillRect(0, 0, width, height);
-  
 
   const fontSize = Math.round(200 * window.devicePixelRatio); 
   await document.fonts.load(`bold ${fontSize}px ${FONT}`);
   
-  ctx.fillRect(0, 0, width, height);
-  ctx.fillStyle = FONT_COLOR; 
-  ctx.letterSpacing = "0.1rem";
-  ctx.textAlign = "center"; 
-  ctx.textBaseline = "middle"; 
-  ctx.font = `bold ${fontSize}px ${FONT}`; 
-  ctx.textRendering = "geometricPrecision"; 
-  ctx.filter = `blur(${BLUR_INTENSITY}px)`;
-  ctx.imageSmoothingEnabled = true; 
-  ctx.imageSmoothingQuality = "high";    
+  ctxText.clearRect(0, 0, width, height);
+  ctxText.fillStyle = FONT_COLOR; 
+  ctxText.letterSpacing = "0.1rem";
+  ctxText.textAlign = "center"; 
+  ctxText.textBaseline = "middle"; 
+  ctxText.font = `bold ${fontSize}px ${FONT}`; 
+  ctxText.textRendering = "geometricPrecision"; 
+  ctxText.filter = `blur(${BLUR_INTENSITY}px)`;
+  ctxText.imageSmoothingEnabled = true; 
+  ctxText.imageSmoothingQuality = "high";    
 
-  ctx.fillText("welcome", width/2, height/2); 
+  ctxText.fillText("welcome", width/2, height/2); 
 
-  const textTexture = new THREE.CanvasTexture(canvas);
+  const background = new THREE.CanvasTexture(canvas)
+  background.minFilter = THREE.LinearFilter; 
+  background.magFilter = THREE.LinearFilter; 
+  background.format = THREE.RGBAFormat; 
+
+  const textTexture = new THREE.CanvasTexture(canvasText);
   textTexture.minFilter = THREE.LinearFilter; 
   textTexture.magFilter = THREE.LinearFilter; 
   textTexture.format = THREE.RGBAFormat; 
+
+  let scrollY = window.scrollY;
+
+  window.addEventListener("scroll", () => {
+    scrollY = window.scrollY;
+  });
+  
 
   window.addEventListener("resize", () => { 
 
@@ -153,20 +183,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     canvas.width = newWidth; 
     canvas.height = newHeight; 
-    ctx.fillStyle = BACKGROUND_COLOR; 
     ctx.fillRect(0, 0, newWidth, newHeight); 
-    const gradient = ctx.createRadialGradient(
-      width / 2, height / 2, 0,
-      width / 2, height / 2, Math.max(width, height) / 2
-    );
-    
-    gradient.addColorStop(0.00, "#fffdf8");
-    gradient.addColorStop(0.01, "#f6debe");
-    gradient.addColorStop(0.02, "#ddb393");
-    gradient.addColorStop(0.80, "#b38a7a");
-    gradient.addColorStop(1.00, "#918887");
-    
-    ctx.fillStyle = gradient;
+  
+    ctx.fillStyle = createGradient(ctx, height, STOPS, width);;
     ctx.fillRect(0, 0, width, height);
 
     const newFontSize = Math.round(250 * window.devicePixelRatio); 
@@ -206,10 +225,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderer.render(simScene, camera); 
     smoothMouse.lerp(targetMouse, 0.05);
 
-
-    renderMaterial.uniforms.textureA.value = rtB.texture; 
-    renderMaterial.uniforms.textureB.value = textTexture; 
+    renderMaterial.uniforms.textureA.value = rtB.texture;
+    renderMaterial.uniforms.text.value = textTexture; 
+    renderMaterial.uniforms.textureB.value = background;
     renderMaterial.uniforms.mouse.value = smoothMouse;
+    renderMaterial.uniforms.scroll.value = scrollY;
 
     renderer.setRenderTarget(null); 
     renderer.render(scene, camera);
