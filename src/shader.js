@@ -65,6 +65,7 @@ void main() {
 
 export const renderVertexShader = `
 varying vec2 vUv; 
+
 void main() {
     vUv = uv; 
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
@@ -74,7 +75,10 @@ void main() {
 export const renderFragmentShader = `
 uniform sampler2D textureA;
 uniform sampler2D textureB; 
+uniform sampler2D text;
 uniform vec2 mouse;
+uniform vec2 resolution;
+uniform float scroll;
 
 varying vec2 vUv;
 
@@ -84,7 +88,17 @@ void main() {
     vec4 data = texture2D(textureA, vUv);
     
     vec2 distortion = 0.1 * data.zw; 
-    vec4 color = texture2D(textureB, vUv + distortion + mouseOffset);
+    vec2 uv = vUv;
+    vec2 uvText = vUv;
+
+    uvText.y -= scroll / resolution.y;
+
+    vec4 bg = texture2D(textureB, uv + distortion);
+    vec4 txt = texture2D(text, uvText + distortion);
+
+    vec3 finalRGB = mix(bg.rgb, txt.rgb, txt.a);
+    float finalA = max(bg.a, txt.a);
+    vec4 color = vec4(finalRGB, finalA);
 
     vec3 normal = normalize(vec3(-data.z * 2.0, 0.5, -data.w * 2.0));
     vec3 lightDir = normalize(vec3(-3.0, 10.0, 3.0));
