@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     fragmentShader: renderFragmentShader, 
     transparent: true,
     }); 
-
+  
   const plane = new THREE.PlaneGeometry(2, 2); 
   const simQuad = new THREE.Mesh(plane, simMaterial); 
   const renderQuad = new THREE.Mesh(plane, renderMaterial); 
@@ -203,13 +203,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     textTexture.needsUpdate = true; 
   }); 
 
-  renderer.domElement.addEventListener("mousemove", (e) => { 
+  window.addEventListener("mousemove", (e) => {
     mouse.x = e.clientX * window.devicePixelRatio; 
     mouse.y = (window.innerHeight - e.clientY) * window.devicePixelRatio; 
     targetMouse.x = e.clientX / window.innerWidth;
-    targetMouse.y = 1 - e.clientY / window.innerHeight; 
-    
-  }); 
+    targetMouse.y = 1 - e.clientY / window.innerHeight;     
+  });
 
   renderer.domElement.addEventListener("mouseleave", () => { 
     mouse.set(0, 0); 
@@ -235,6 +234,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderer.render(scene, camera);
 
     composer.render();
+
+    
 
     const temp = rtA; 
     rtA = rtB; 
