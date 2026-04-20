@@ -11,16 +11,6 @@
     font-family: "bbbDmLight";
 }
 
-.about-title {   
-    font-family: "picnicMain";
-}
-
-.about-list {
-    font-family: "bbbKarrik";
-    list-style-type: none;
-    text-decoration: none;
-}
-
 body {      
     background: white;
     display: grid;
@@ -34,6 +24,17 @@ canvas {
     left: 0;
     position: fixed;
     z-index: 0;
+}
+
+.caroussel {
+    display: flex;
+    gap: 12px;
+    overflow: scroll;
+    > img {
+        max-height: 300px;
+        height: auto;
+        width: auto;
+    }
 }
 
 header {
@@ -91,7 +92,6 @@ nav {
 }
 
 section {
-    height: 100vh;
     width: 100vw;
     z-index: 1;
 }
