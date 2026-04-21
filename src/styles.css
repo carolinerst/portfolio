@@ -2,7 +2,7 @@
     margin-left: 42px;
     margin-right: 42px;
     text-align: justify;
-    padding: 62px;
+    padding: 48px;
     opacity: 80%;
     z-index: 1;
 }
@@ -26,16 +26,29 @@ canvas {
     z-index: 0;
 }
 
-.caroussel {
+.carousel {
     display: flex;
-    gap: 12px;
-    overflow: scroll;
-    > img {
-        max-height: 300px;
-        height: auto;
-        width: auto;
-    }
+    overflow-X: scroll;
+    overflow-y: visible;
+    padding: 36px 0;
 }
+
+.carousel-wrapper {
+    overflow: visible;
+}
+
+.carousel-card {
+    max-height: 300px;
+    padding: 24px;
+    transition: all 0.2s cubic-bezier(0.79,0.14,0.15,0.86);
+    transform-origin: center;
+    width: auto;
+}
+
+.carousel-card:hover {
+    transform: scale(1.2);
+}
+
 
 header {
     color: rgb(255, 255, 255);  
