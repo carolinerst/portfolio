@@ -33,10 +33,6 @@ canvas {
     padding: 36px 0;
 }
 
-.carousel-wrapper {
-    overflow: visible;
-}
-
 .carousel-card {
     max-height: 300px;
     padding: 24px;
@@ -49,6 +45,22 @@ canvas {
     transform: scale(1.2);
 }
 
+.contact-links {  
+    display: flex;
+    font-family: picnicMain;
+    justify-content: center;
+    gap: 72px;
+    padding: 48px;
+}
+
+.contact-link {  
+    color: #EDD8B7;
+    text-decoration: none;
+}
+
+.contact-link:hover {
+    color: #adf6a1;
+}
 
 header {
     color: rgb(255, 255, 255);  
