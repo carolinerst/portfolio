@@ -84,7 +84,7 @@ varying vec2 vUv;
 
 void main() {   
 
-    vec2 mouseOffset = (mouse - 0.05) * 0.006;
+    vec2 mouseOffset = (mouse - 0.1) * 0.006;
     vec4 data = texture2D(textureA, vUv);
     
     vec2 distortion = 0.1 * data.zw; 
@@ -94,7 +94,7 @@ void main() {
     uvText.y -= scroll / resolution.y;
 
     vec4 bg = texture2D(textureB, uv + distortion);
-    vec4 txt = texture2D(text, uvText + distortion);
+    vec4 txt = texture2D(text, uvText + distortion + mouseOffset);
 
     vec3 finalRGB = mix(bg.rgb, txt.rgb, txt.a);
     float finalA = max(bg.a, txt.a);
