@@ -31,7 +31,13 @@ canvas {
     overflow-X: scroll;
     overflow-y: visible;
     padding: 36px 0;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
+
+.carousel::-webkit-scrollbar {
+    display: none;
+  }
 
 .carousel-card-image {
     transition: transform 0.2s cubic-bezier(0.79,0.14,0.15,0.86);
