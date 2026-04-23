@@ -33,17 +33,51 @@ canvas {
     padding: 36px 0;
 }
 
-.carousel-card {
-    max-height: 300px;
-    padding: 24px;
-    transition: all 0.2s cubic-bezier(0.79,0.14,0.15,0.86);
+.carousel-card-image {
+    transition: transform 0.2s cubic-bezier(0.79,0.14,0.15,0.86);
+    height: 100%;
     transform-origin: center;
     width: auto;
 }
 
-.carousel-card:hover {
-    transform: scale(1.2);
+.carousel-card {
+    height: 300px;
+    padding: 24px;
+    animation: float 3s ease-in-out infinite;
+    transform-origin: center;
+    width: auto;
 }
+
+.carousel-card:nth-child(3n) {
+    --x: 2px;
+    --y: -3px;
+    animation-duration: 4.5s;
+}
+
+.carousel-card:nth-child(3n+1) {
+    --x: -3px;
+    --y: 4px;
+    animation-duration: 5s;
+}
+
+.carousel-card:nth-child(3n+2) {
+    --x: 4px;
+    --y: 2.5px;
+    animation-duration: 4s;
+}
+
+.carousel-card-image:hover {
+    transform: scale(1.2);
+    --x: 0px;
+    --y: 0px;
+}
+
+@keyframes float {
+    0%   { transform: translate(0px, 0px); }
+    50%  { transform: translate(var(--x), var(--y)); }
+    100% { transform: translate(0px, 0px); }
+}
+
 
 .contact-links {  
     display: flex;
