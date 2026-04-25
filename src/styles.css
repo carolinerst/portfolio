@@ -94,12 +94,12 @@ canvas {
 }
 
 .contact-link {  
-    color: #EDD8B7;
+    color: #adf6a1;
     text-decoration: none;
 }
 
 .contact-link:hover {
-    color: #adf6a1;
+    color: #EDD8B7;
 }
 
 header {
@@ -145,12 +145,12 @@ nav {
     > li {
 
         > a {
-            color: #EDD8B7;
+            color: #adf6a1;
             text-decoration: none;
         }
 
         > a:hover {
-            color: #adf6a1;
+            color: #EDD8B7;
         }
      
     }
