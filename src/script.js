@@ -28,11 +28,11 @@ const createCanvas = (height, width) => {
 document.addEventListener("DOMContentLoaded", async () => { 
   
   const STOPS = [
-    { color: "#fffdf8", offset: 0.00 }, 
-    { color:"#f6debe", offset:  0.01 }, 
-    { color: "#ddb393", offset: 0.02 }, 
-    { color: "#b38a7a", offset: 0.75 },
-    { color: "#918887", offset: 1.00 }];
+    { color: "#D9B8D9", offset: 0.00 }, 
+    { color:"#dcabdc", offset:  0.15 }, 
+    { color: "#A884C1", offset: 0.30 }, 
+    { color: "#39355C", offset: 0.75 },
+    { color: "#231530", offset: 1.00 }];
 
   const FONT_COLOR = "#EDD8B7";
   const BLUR_INTENSITY = 2.0;
